@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RNP Picnic Registration</title>
+    <script src="https://sdk.cashfree.com/js/v3/cashfree.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --glass-bg: rgba(255, 255, 255, 0.1);
+            --glass-border: rgba(255, 255, 255, 0.2);
+            --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+            --primary-gradient: linear-gradient(135deg, #ff6b6b 0%, #ff8e53 100%);
+            --accent-color: #ff6b6b;
+            --text-color: #ffffff;
+            --input-bg: rgba(0, 0, 0, 0.2);
+        }
+
+        body {
+            margin: 0;
+            font-family: 'Poppins', sans-serif;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: var(--text-color);
+            padding: 20px;
+            overflow-x: hidden;
+            background: #0f2027; /* Fallback */
+            background: linear-gradient(-45deg, #0f2027, #203a43, #2c5364, #1e3c72);
+            background-size: 400% 400%;
+            animation: gradientBG 15s ease infinite;
+            position: relative;
+        }
+
+        /* Parallax/Floating Background Elements */
+        body::before, body::after {
+            content: '';
+            position: absolute;
+            width: 300px;
+            height: 300px;
+            border-radius: 50%;
+            background: rgba(255, 107, 107, 0.4);
+            filter: blur(80px);
+            z-index: -1;
+            animation: float 10s infinite ease-in-out;
+        }
+        body::before { top: -50px; left: -50px; animation-delay: 0s; }
+        body::after { bottom: -50px; right: -50px; background: rgba(42, 82, 152, 0.6); animation-delay: -5s; }
+
+        /* Main Glass Container */
+        .glass-container {
+            background: var(--glass-bg);
+            backdrop-filter: blur(16px) saturate(180%);
+            -webkit-backdrop-filter: blur(16px) saturate(180%);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            padding: 40px;
+            width: 100%;
+            max-width: 480px;
+            box-shadow: var(--glass-shadow);
+            animation: fadeInUp 0.8s cubic-bezier(0.2, 0.8, 0.2, 1);
+            position: relative;
+            z-index: 10;
+        }
+
+        /* Logo Styling */
+        .logo-container {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        
+        .logo-img {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 4px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 0 20px rgba(0,0,0,0.3);
+            animation: pulseGlow 3s infinite;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 10px;
+            font-weight: 600;
+            font-size: 1.8rem;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            background: linear-gradient(to right, #fff, #b4c6e7);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .subtitle {
+            text-align: center;
+            font-size: 0.9rem;
+            opacity: 0.8;
+            margin-bottom: 30px;
+            font-weight: 300;
+        }
+
+        /* Form Elements */
+        .input-group {
+            margin-bottom: 20px;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 0.85em;
+            font-weight: 500;
+            color: #d1d5db;
+            margin-left: 4px;
+        }
+
+        select, input {
+            width: 100%;
+            padding: 14px 16px;
+            background: var(--input-bg);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            color: white;
+            font-family: 'Poppins', sans-serif;
+            font-size: 15px;
+            outline: none;
+            box-sizing: border-box;
+            transition: all 0.3s ease;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        select option {
+            background: #1e3c72;
+            color: white;
+        }
+
+        select:focus, input:focus {
+            background: rgba(0, 0, 0, 0.3);
+            border-color: var(--accent-color);
+            box-shadow: 0 0 0 4px rgba(255, 107, 107, 0.15);
+            transform: translateY(-1px);
+        }
+
+        /* Dynamic Member Fields Animation */
+        .member-field {
+            animation: slideInRight 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+            opacity: 0; /* Start hidden for animation */
+        }
+        
+        /* Stagger delays for members handled via JS or simple CSS for first few */
+        .member-field:nth-child(1) { animation-delay: 0.05s; }
+        .member-field:nth-child(2) { animation-delay: 0.1s; }
+        .member-field:nth-child(3) { animation-delay: 0.15s; }
+        .member-field:nth-child(4) { animation-delay: 0.2s; }
+        .member-field:nth-child(5) { animation-delay: 0.25s; }
+
+        input[readonly] {
+            background: rgba(255, 255, 255, 0.05);
+            border-color: transparent;
+            color: #a0aec0;
+            cursor: default;
+        }
+
+        /* Payment Section */
+        .payment-summary {
+            margin-top: 35px;
+            padding-top: 25px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .total-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 1.1em;
+        }
+
+        .total-amount {
+            font-size: 1.4em;
+            font-weight: 700;
+            color: #4ade80;
+            text-shadow: 0 0 10px rgba(74, 222, 128, 0.3);
+        }
+
+        button.pay-btn {
+            width: 100%;
+            padding: 16px;
+            background: var(--primary-gradient);
+            border: none;
+            border-radius: 12px;
+            color: white;
+            font-size: 16px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 4px 15px rgba(255, 107, 107, 0.4);
+            position: relative;
+            overflow: hidden;
+        }
+
+        button.pay-btn::after {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(rgba(255,255,255,0.2), transparent);
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        button.pay-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(255, 107, 107, 0.5);
+        }
+        
+        button.pay-btn:hover::after { opacity: 1; }
+
+        button.pay-btn:active {
+            transform: translateY(1px);
+        }
+
+        button.pay-btn:disabled {
+            background: #4b5563;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        /* Loaders and Messages */
+        .loading {
+            text-align: center;
+            padding: 20px;
+            background: rgba(0,0,0,0.2);
+            border-radius: 12px;
+            font-size: 0.9em;
+            color: #a0aec0;
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            align-items: center;
+        }
+        
+        .loading::after {
+            content: "";
+            width: 16px; 
+            height: 16px;
+            border: 2px solid #fff;
+            border-top-color: transparent;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        /* Animations */
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        @keyframes float {
+            0% { transform: translate(0px, 0px); }
+            50% { transform: translate(20px, 20px); }
+            100% { transform: translate(0px, 0px); }
+        }
+
+        @keyframes pulseGlow {
+            0% { box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.2); }
+            70% { box-shadow: 0 0 0 15px rgba(255, 255, 255, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(255, 255, 255, 0); }
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(40px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes slideInRight {
+            from { opacity: 0; transform: translateX(-20px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Scrollbar Styling */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: rgba(0,0,0,0.1); }
+        ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.4); }
+
+    </style>
+</head>
+<body>
+
+<div class="glass-container">
+    <div class="logo-container">
+        <img src="https://i.postimg.cc/N0bDMwkT/RNP_LOGO.jpg" alt="RNP Logo" class="logo-img">
+    </div>
+
+    <h1>Picnic Registration</h1>
+    <div class="subtitle">Ramgarh Nagrik Parishad</div>
+    
+    <div id="loading-registrars" class="loading">Syncing with server...</div>
+
+    <form id="registration-form" style="display: none;">
+        <div class="input-group">
+            <label for="registrar">Select Parishad Sathi</label>
+            <select id="registrar" required>
+                <option value="" disabled selected>Choose from list...</option>
+            </select>
+        </div>
+
+        <div id="members-container"></div>
+
+        <div class="payment-summary">
+            <div class="total-row">
+                <span>Total Payable</span>
+                <span class="total-amount" id="total-display">₹0</span>
+            </div>
+            <button type="submit" class="pay-btn" id="pay-btn">
+                Proceed to Pay
+            </button>
+        </div>
+    </form>
+</div>
+
+<script>
+    // ==========================================
+    // ⚙️ CONFIGURATION
+    // ==========================================
+    
+    const WORKER_URL = "https://rnp-picnic-backend.multimediawallah.workers.dev"; 
+
+    // ==========================================
+    
+    const cashfree = Cashfree({ mode: "production" }); 
+    const registrarSelect = document.getElementById('registrar');
+    const membersContainer = document.getElementById('members-container');
+    const totalDisplay = document.getElementById('total-display');
+    const form = document.getElementById('registration-form');
+    const loadingDiv = document.getElementById('loading-registrars');
+    
+    const COST_PER_MEMBER = 800;
+    let registrarData = [];
+
+    // 1. Fetch Registrar List on Load
+    window.addEventListener('DOMContentLoaded', async () => {
+        try {
+            console.log("Fetching from:", `${WORKER_URL}/registrars`);
+            const response = await fetch(`${WORKER_URL}/registrars`);
+            
+            if (!response.ok) throw new Error("Network response was not ok");
+            
+            const data = await response.json();
+            console.log("Data received:", data);
+            
+            // Expected data format from sheet: ["Name", "Count", "Paid/Due", "Amount"]
+            // The API returns rows. Row 0 is header.
+            const rows = data.values.slice(1); 
+            
+            registrarData = rows.map(row => ({
+                name: row[0],
+                count: parseInt(row[1]) || 0
+            }));
+
+            populateDropdown();
+            loadingDiv.style.display = 'none';
+            form.style.display = 'block';
+
+        } catch (error) {
+            loadingDiv.innerText = "Error loading list. Please refresh.";
+            console.error("Fetch error:", error);
+        }
+    });
+
+    function populateDropdown() {
+        registrarData.forEach(item => {
+            const option = document.createElement('option');
+            option.value = item.name;
+            option.textContent = item.name;
+            registrarSelect.appendChild(option);
+        });
+    }
+
+    // 2. Handle Registrar Selection
+    registrarSelect.addEventListener('change', (e) => {
+        const selectedName = e.target.value;
+        const selectedData = registrarData.find(d => d.name === selectedName);
+        
+        if (selectedData) {
+            generateMemberFields(selectedData.count, selectedData.name);
+            updateTotal();
+        }
+    });
+
+    function generateMemberFields(count, registrarName) {
+        membersContainer.innerHTML = ''; // Clear previous
+        
+        for (let i = 0; i < count; i++) {
+            const div = document.createElement('div');
+            div.className = 'member-field input-group';
+            
+            const label = document.createElement('label');
+            label.textContent = i === 0 ? `(Compulsory) Registrar Name` : `Member ${i + 1} Full Name`;
+            
+            const input = document.createElement('input');
+            input.type = 'text';
+            input.name = `member_${i}`;
+            input.placeholder = "Enter name here...";
+            input.required = true;
+            
+            // Auto-fill first box with Registrar Name
+            if (i === 0) {
+                input.value = registrarName;
+                input.readOnly = true; 
+            }
+            
+            div.appendChild(label);
+            div.appendChild(input);
+            membersContainer.appendChild(div);
+        }
+    }
+
+    function updateTotal() {
+        const memberCount = membersContainer.children.length;
+        const total = memberCount * COST_PER_MEMBER;
+        totalDisplay.textContent = `₹${total}`;
+        return total;
+    }
+
+    // 3. Handle Payment Submission
+    form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const payBtn = document.getElementById('pay-btn');
+        payBtn.disabled = true;
+        payBtn.textContent = "Processing...";
+
+        const amount = updateTotal();
+        const registrarName = registrarSelect.value;
+        
+        const memberInputs = document.querySelectorAll('#members-container input');
+        const memberNames = Array.from(memberInputs).map(input => input.value);
+
+        try {
+            // A. Create Order on Backend
+            const response = await fetch(`${WORKER_URL}/create-order`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    registrarName: registrarName,
+                    amount: amount,
+                    customerName: registrarName,
+                    customerPhone: "9999999999", 
+                    memberNames: memberNames
+                })
+            });
+
+            const orderData = await response.json();
+
+            if (orderData.payment_session_id) {
+                // B. Open Cashfree Checkout
+                await cashfree.checkout({
+                    paymentSessionId: orderData.payment_session_id
+                });
+            } else {
+                alert("Error creating order: " + JSON.stringify(orderData));
+                payBtn.disabled = false;
+                payBtn.textContent = "Pay Now";
+            }
+
+        } catch (error) {
+            console.error(error);
+            alert("Something went wrong. Please try again.");
+            payBtn.disabled = false;
+            payBtn.textContent = "Pay Now";
+        }
+    });
+
+</script>
+
+</body>
+</html>
