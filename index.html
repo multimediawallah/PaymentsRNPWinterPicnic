@@ -28,14 +28,13 @@
             color: var(--text-color);
             padding: 20px;
             overflow-x: hidden;
-            background: #0f2027; /* Fallback */
+            background: #0f2027;
             background: linear-gradient(-45deg, #0f2027, #203a43, #2c5364, #1e3c72);
             background-size: 400% 400%;
             animation: gradientBG 15s ease infinite;
             position: relative;
         }
 
-        /* Parallax/Floating Background Elements */
         body::before, body::after {
             content: '';
             position: absolute;
@@ -50,7 +49,6 @@
         body::before { top: -50px; left: -50px; animation-delay: 0s; }
         body::after { bottom: -50px; right: -50px; background: rgba(42, 82, 152, 0.6); animation-delay: -5s; }
 
-        /* Main Glass Container */
         .glass-container {
             background: var(--glass-bg);
             backdrop-filter: blur(16px) saturate(180%);
@@ -66,7 +64,6 @@
             z-index: 10;
         }
 
-        /* Logo Styling */
         .logo-container {
             text-align: center;
             margin-bottom: 20px;
@@ -103,11 +100,9 @@
             font-weight: 300;
         }
 
-        /* Form Elements */
         .input-group {
             margin-bottom: 20px;
             position: relative;
-            transition: all 0.3s ease;
         }
 
         label {
@@ -117,6 +112,12 @@
             font-weight: 500;
             color: #d1d5db;
             margin-left: 4px;
+        }
+
+        .required-star {
+            color: #ff6b6b;
+            margin-left: 2px;
+            font-weight: bold;
         }
 
         select, input {
@@ -131,7 +132,6 @@
             outline: none;
             box-sizing: border-box;
             transition: all 0.3s ease;
-            box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);
         }
 
         select option {
@@ -143,21 +143,12 @@
             background: rgba(0, 0, 0, 0.3);
             border-color: var(--accent-color);
             box-shadow: 0 0 0 4px rgba(255, 107, 107, 0.15);
-            transform: translateY(-1px);
         }
 
-        /* Dynamic Member Fields Animation */
         .member-field {
             animation: slideInRight 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
-            opacity: 0; /* Start hidden for animation */
+            opacity: 0;
         }
-        
-        /* Stagger delays for members handled via JS or simple CSS for first few */
-        .member-field:nth-child(1) { animation-delay: 0.05s; }
-        .member-field:nth-child(2) { animation-delay: 0.1s; }
-        .member-field:nth-child(3) { animation-delay: 0.15s; }
-        .member-field:nth-child(4) { animation-delay: 0.2s; }
-        .member-field:nth-child(5) { animation-delay: 0.25s; }
 
         input[readonly] {
             background: rgba(255, 255, 255, 0.05);
@@ -166,7 +157,6 @@
             cursor: default;
         }
 
-        /* Payment Section */
         .payment-summary {
             margin-top: 35px;
             padding-top: 25px;
@@ -202,30 +192,13 @@
             text-transform: uppercase;
             letter-spacing: 1px;
             cursor: pointer;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: all 0.3s;
             box-shadow: 0 4px 15px rgba(255, 107, 107, 0.4);
-            position: relative;
-            overflow: hidden;
-        }
-
-        button.pay-btn::after {
-            content: '';
-            position: absolute;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: linear-gradient(rgba(255,255,255,0.2), transparent);
-            opacity: 0;
-            transition: opacity 0.3s;
         }
 
         button.pay-btn:hover {
             transform: translateY(-2px);
             box-shadow: 0 8px 25px rgba(255, 107, 107, 0.5);
-        }
-        
-        button.pay-btn:hover::after { opacity: 1; }
-
-        button.pay-btn:active {
-            transform: translateY(1px);
         }
 
         button.pay-btn:disabled {
@@ -235,31 +208,12 @@
             box-shadow: none;
         }
 
-        /* Loaders and Messages */
         .loading {
             text-align: center;
             padding: 20px;
-            background: rgba(0,0,0,0.2);
-            border-radius: 12px;
-            font-size: 0.9em;
             color: #a0aec0;
-            display: flex;
-            justify-content: center;
-            gap: 10px;
-            align-items: center;
-        }
-        
-        .loading::after {
-            content: "";
-            width: 16px; 
-            height: 16px;
-            border: 2px solid #fff;
-            border-top-color: transparent;
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
         }
 
-        /* Animations */
         @keyframes gradientBG {
             0% { background-position: 0% 50%; }
             50% { background-position: 100% 50%; }
@@ -267,9 +221,8 @@
         }
 
         @keyframes float {
-            0% { transform: translate(0px, 0px); }
+            0%, 100% { transform: translate(0, 0); }
             50% { transform: translate(20px, 20px); }
-            100% { transform: translate(0px, 0px); }
         }
 
         @keyframes pulseGlow {
@@ -287,17 +240,6 @@
             from { opacity: 0; transform: translateX(-20px); }
             to { opacity: 1; transform: translateX(0); }
         }
-        
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-
-        /* Scrollbar Styling */
-        ::-webkit-scrollbar { width: 8px; }
-        ::-webkit-scrollbar-track { background: rgba(0,0,0,0.1); }
-        ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 4px; }
-        ::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.4); }
-
     </style>
 </head>
 <body>
@@ -314,7 +256,7 @@
 
     <form id="registration-form" style="display: none;">
         <div class="input-group">
-            <label for="registrar">Select Parishad Sathi</label>
+            <label for="registrar">Select Parishad Sathi <span class="required-star">*</span></label>
             <select id="registrar" required>
                 <option value="" disabled selected>Choose from list...</option>
             </select>
@@ -335,15 +277,9 @@
 </div>
 
 <script>
-    // ==========================================
-    // ⚙️ CONFIGURATION
-    // ==========================================
-    
     const WORKER_URL = "https://rnp-picnic-backend.multimediawallah.workers.dev"; 
-
-    // ==========================================
-    
     const cashfree = Cashfree({ mode: "production" }); 
+    
     const registrarSelect = document.getElementById('registrar');
     const membersContainer = document.getElementById('members-container');
     const totalDisplay = document.getElementById('total-display');
@@ -353,19 +289,10 @@
     const COST_PER_MEMBER = 800;
     let registrarData = [];
 
-    // 1. Fetch Registrar List on Load
     window.addEventListener('DOMContentLoaded', async () => {
         try {
-            console.log("Fetching from:", `${WORKER_URL}/registrars`);
             const response = await fetch(`${WORKER_URL}/registrars`);
-            
-            if (!response.ok) throw new Error("Network response was not ok");
-            
             const data = await response.json();
-            console.log("Data received:", data);
-            
-            // Expected data format from sheet: ["Name", "Count", "Paid/Due", "Amount"]
-            // The API returns rows. Row 0 is header.
             const rows = data.values.slice(1); 
             
             registrarData = rows.map(row => ({
@@ -373,7 +300,13 @@
                 count: parseInt(row[1]) || 0
             }));
 
-            populateDropdown();
+            registrarData.forEach(item => {
+                const option = document.createElement('option');
+                option.value = item.name;
+                option.textContent = item.name;
+                registrarSelect.appendChild(option);
+            });
+
             loadingDiv.style.display = 'none';
             form.style.display = 'block';
 
@@ -383,62 +316,64 @@
         }
     });
 
-    function populateDropdown() {
-        registrarData.forEach(item => {
-            const option = document.createElement('option');
-            option.value = item.name;
-            option.textContent = item.name;
-            registrarSelect.appendChild(option);
-        });
-    }
-
-    // 2. Handle Registrar Selection
     registrarSelect.addEventListener('change', (e) => {
-        const selectedName = e.target.value;
-        const selectedData = registrarData.find(d => d.name === selectedName);
-        
+        const selectedData = registrarData.find(d => d.name === e.target.value);
         if (selectedData) {
-            generateMemberFields(selectedData.count, selectedData.name);
-            updateTotal();
+            // N+1 fields as requested
+            generateMemberFields(selectedData.count + 1, selectedData.name);
         }
     });
 
-    function generateMemberFields(count, registrarName) {
-        membersContainer.innerHTML = ''; // Clear previous
+    function generateMemberFields(totalFields, registrarName) {
+        membersContainer.innerHTML = ''; 
         
-        for (let i = 0; i < count; i++) {
+        for (let i = 0; i < totalFields; i++) {
             const div = document.createElement('div');
             div.className = 'member-field input-group';
             
             const label = document.createElement('label');
-            label.textContent = i === 0 ? `(Compulsory) Registrar Name` : `Member ${i + 1} Full Name`;
+            
+            // Logic: Last TWO fields are not required (no asterisk)
+            const isOptional = (i >= totalFields - 2);
+            
+            const labelText = i === 0 ? `Registrar Name` : `Member ${i + 1} Name`;
+            label.innerHTML = `${labelText} ${!isOptional ? '<span class="required-star">*</span>' : ''}`;
             
             const input = document.createElement('input');
             input.type = 'text';
             input.name = `member_${i}`;
-            input.placeholder = "Enter name here...";
-            input.required = true;
+            input.placeholder = "Enter name...";
+            input.required = !isOptional;
             
-            // Auto-fill first box with Registrar Name
             if (i === 0) {
                 input.value = registrarName;
                 input.readOnly = true; 
             }
+
+            input.addEventListener('input', updateTotal);
             
             div.appendChild(label);
             div.appendChild(input);
             membersContainer.appendChild(div);
         }
+        updateTotal(); 
     }
 
     function updateTotal() {
-        const memberCount = membersContainer.children.length;
-        const total = memberCount * COST_PER_MEMBER;
+        const memberInputs = document.querySelectorAll('#members-container input');
+        let activeCount = 0;
+
+        memberInputs.forEach(input => {
+            if (input.value.trim() !== "") {
+                activeCount++;
+            }
+        });
+
+        const total = activeCount * COST_PER_MEMBER;
         totalDisplay.textContent = `₹${total}`;
         return total;
     }
 
-    // 3. Handle Payment Submission
     form.addEventListener('submit', async (e) => {
         e.preventDefault();
         const payBtn = document.getElementById('pay-btn');
@@ -447,12 +382,12 @@
 
         const amount = updateTotal();
         const registrarName = registrarSelect.value;
-        
         const memberInputs = document.querySelectorAll('#members-container input');
-        const memberNames = Array.from(memberInputs).map(input => input.value);
+        const memberNames = Array.from(memberInputs)
+                                 .map(input => input.value.trim())
+                                 .filter(val => val !== "");
 
         try {
-            // A. Create Order on Backend
             const response = await fetch(`${WORKER_URL}/create-order`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -468,24 +403,20 @@
             const orderData = await response.json();
 
             if (orderData.payment_session_id) {
-                // B. Open Cashfree Checkout
                 await cashfree.checkout({
                     paymentSessionId: orderData.payment_session_id
                 });
             } else {
-                alert("Error creating order: " + JSON.stringify(orderData));
+                alert("Error: " + (orderData.message || "Could not create order"));
                 payBtn.disabled = false;
-                payBtn.textContent = "Pay Now";
+                payBtn.textContent = "Proceed to Pay";
             }
-
         } catch (error) {
-            console.error(error);
             alert("Something went wrong. Please try again.");
             payBtn.disabled = false;
-            payBtn.textContent = "Pay Now";
+            payBtn.textContent = "Proceed to Pay";
         }
     });
-
 </script>
 
 </body>
